@@ -58,8 +58,9 @@ const NotesPanel = () => {
         return;
       }
 
-      // We need to make sure the HTML content is properly formatted with all styling
+      // Create a complete HTML document with all necessary styles
       printWindow.document.write(`
+        <!DOCTYPE html>
         <html>
           <head>
             <title>Notes PDF</title>
@@ -85,33 +86,33 @@ const NotesPanel = () => {
                 padding: 0 2px;
               }
               mark.yellow {
-                background-color: #fff9c4;
-                color: #000;
+                background-color: #fff9c4 !important;
+                color: #000 !important;
               }
               mark.pink {
-                background-color: #f8bbd0;
-                color: #000;
+                background-color: #f8bbd0 !important;
+                color: #000 !important;
               }
               mark.green {
-                background-color: #c8e6c9;
-                color: #000;
+                background-color: #c8e6c9 !important;
+                color: #000 !important;
               }
               mark.blue {
-                background-color: #bbdefb;
-                color: #000;
+                background-color: #bbdefb !important;
+                color: #000 !important;
               }
               mark.purple {
-                background-color: #e1bee7;
-                color: #000;
+                background-color: #e1bee7 !important;
+                color: #000 !important;
               }
               strong {
-                font-weight: bold;
+                font-weight: bold !important;
               }
               em {
-                font-style: italic;
+                font-style: italic !important;
               }
               u {
-                text-decoration: underline;
+                text-decoration: underline !important;
               }
             </style>
           </head>
@@ -122,12 +123,17 @@ const NotesPanel = () => {
         </html>
       `);
 
+      // Force the browser to apply the styles before printing
       printWindow.document.close();
+      
+      // Make sure everything is loaded before printing
       printWindow.onload = function() {
+        // Add a longer delay to ensure styles are fully applied
         setTimeout(() => {
+          printWindow.focus(); // Make sure the window has focus
           printWindow.print();
           toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
-        }, 300);
+        }, 500);
       };
     } catch (error) {
       console.error("Failed to generate PDF:", error);
