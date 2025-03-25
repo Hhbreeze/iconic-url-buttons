@@ -110,7 +110,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
           isPressed && "scale-95",
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
           !hasUrl && "border-2 border-dashed border-white/30",
-          "text-white font-medium" // Added font weight and text color
+          "text-white font-medium border border-blueish-gray" // Added blueish-gray border
         )}
         onClick={handleClick}
         onContextMenu={handleEdit}
