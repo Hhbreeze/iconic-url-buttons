@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -109,6 +110,10 @@
     @apply border-2;
     border-image: linear-gradient(to bottom, #403E43, #8A898C, #9F9EA1, #C8C8C9, #aaadb0) 1;
     box-shadow: 0 0 0 1px rgba(170, 173, 176, 0.3);
+  }
+  
+  .bg-blueish-gray {
+    background: linear-gradient(180deg, #8A898C 0%, #403E43 100%);
   }
 }
 
