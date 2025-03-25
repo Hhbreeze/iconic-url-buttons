@@ -12,9 +12,10 @@ import { Upload, Link as LinkIcon, ExternalLink } from "lucide-react";
 interface QuickLinkButtonProps {
   link: QuickLink;
   onUpdate: (updatedLink: QuickLink) => void;
+  onClickLink: (url: string) => void;
 }
 
-const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => {
+const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onClickLink }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
@@ -35,8 +36,8 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
       formattedUrl = `https://${formattedUrl}`;
     }
     
-    // Open the URL in a new tab
-    window.open(formattedUrl, "_blank", "noopener,noreferrer");
+    // Call the onClickLink prop instead of opening directly
+    onClickLink(formattedUrl);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -87,12 +88,12 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         <img 
           src={iconPreview} 
           alt={title} 
-          className="w-10 h-10 object-contain"
+          className="w-8 h-8 object-contain"
         />
       );
     }
     
-    return <LinkIcon className="w-8 h-8 text-white/70" />;
+    return <LinkIcon className="w-6 h-6 text-white/70" />;
   };
 
   // Check if the button has a URL
@@ -103,23 +104,23 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
       <button
         className={cn(
           "link-button",
-          "bg-blueish-gray", // Using our blueish-gray background
+          "bg-blueish-gray", 
           isHovered && "ring-2 ring-white/70 scale-105",
           isPressed && "scale-95",
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-          !hasUrl && "border-2 border-solid border-white/30", // Changed dashed to solid
-          "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]", // Kept the shadow for darker edge
-          "h-[80px] w-[80px]" // Made buttons smaller with fixed dimensions
+          !hasUrl && "border-2 border-solid border-white/30", 
+          "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]", 
+          "h-[70px] w-[70px]" // Made buttons even smaller
         )}
         onClick={handleClick}
-        onContextMenu={handleEdit} // Open edit dialog on right-click
+        onContextMenu={handleEdit}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
-        <div className="flex flex-col items-center justify-center gap-1 z-10 p-2">
+        <div className="flex flex-col items-center justify-center gap-1 z-10 p-1">
           {displayIcon()}
           {title && (
             <span className="text-xs font-medium tracking-wide truncate max-w-full text-white drop-shadow-md">
