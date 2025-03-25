@@ -5,8 +5,6 @@ import NotesPanel from "@/components/NotesPanel";
 import { QuickLink } from "@/types";
 import { loadLinks, updateLink } from "@/lib/storage";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react"; // Using FileDown instead of FilePdf which doesn't exist
 
 const Index = () => {
   const [links, setLinks] = useState<QuickLink[]>([]);
@@ -22,17 +20,6 @@ const Index = () => {
     const updatedLinks = updateLink(links, updatedLink);
     setLinks(updatedLinks);
     toast.success("Link updated successfully");
-  };
-
-  const handleSaveToPdf = async () => {
-    try {
-      // Use the browser's print functionality to save as PDF
-      window.print();
-      toast.success("Page ready for PDF conversion. Select 'Save as PDF' in the print dialog.");
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-      toast.error("Failed to generate PDF. Please try again.");
-    }
   };
 
   if (!loaded) {
@@ -54,16 +41,6 @@ const Index = () => {
             Access your favorite websites with a single click. Right-click any button to edit.
           </p>
         </header>
-
-        <div className="flex items-center justify-center mb-4">
-          <Button
-            onClick={handleSaveToPdf}
-            className="bg-amber-600 hover:bg-amber-700 text-white"
-          >
-            <FileDown className="mr-2" />
-            Save as PDF
-          </Button>
-        </div>
 
         <div className="flex gap-6 flex-col md:flex-row">
           <div className="md:flex-1">
