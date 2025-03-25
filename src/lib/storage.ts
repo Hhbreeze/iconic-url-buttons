@@ -24,7 +24,8 @@ const DEFAULT_GRADIENTS = [
 export const createInitialLinks = (): QuickLink[] => {
   const links: QuickLink[] = [];
   
-  for (let i = 0; i < 25; i++) {
+  // Changed from 25 to 24 buttons
+  for (let i = 0; i < 24; i++) {
     const gradientPair = DEFAULT_GRADIENTS[i % DEFAULT_GRADIENTS.length];
     links.push({
       id: `link-${i}`,
