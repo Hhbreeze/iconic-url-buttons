@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -30,8 +29,13 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onCli
       return;
     }
     
-    // Call the onClickLink prop with the properly formatted URL
-    onClickLink(link.url);
+    // Format URL if needed and call the onClickLink prop
+    const formattedUrl = link.url.trim().startsWith('http') 
+      ? link.url.trim() 
+      : `https://${link.url.trim()}`;
+    
+    console.log("QuickLinkButton: Clicked on link with URL:", formattedUrl);
+    onClickLink(formattedUrl);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
