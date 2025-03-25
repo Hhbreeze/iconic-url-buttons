@@ -17,6 +17,17 @@ const WebPreview: React.FC<WebPreviewProps> = ({ url }) => {
       setIsLoading(true);
       setError(null);
       console.log("WebPreview: Loading URL:", url);
+      
+      // Add additional check for known sites that block iframe embedding
+      const blockedDomains = ['jw.org', 'wol.jw.org'];
+      const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+      const domain = urlObj.hostname.replace('www.', '');
+      
+      if (blockedDomains.some(blocked => domain.includes(blocked))) {
+        setIsLoading(false);
+        setError("This website blocks being displayed in iframes due to security policies. Please use the 'Open in new tab' option.");
+        console.warn("WebPreview: Site likely blocks iframe embedding:", url);
+      }
     }
   }, [url]);
 
