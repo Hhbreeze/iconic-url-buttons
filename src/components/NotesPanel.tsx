@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Save, FileDown } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { toast } from "sonner";
 
 const NotesPanel = () => {
@@ -36,24 +36,14 @@ const NotesPanel = () => {
     <div className="glass-card bg-white/10 dark:bg-black/25 p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium text-white">Notes</h2>
-        <div className="flex space-x-2">
-          <Button 
-            size="sm" 
-            onClick={handleSaveNotes}
-            className="flex items-center gap-1"
-          >
-            <Save className="w-4 h-4" />
-            Save
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleSaveToPdf}
-            className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1"
-          >
-            <FileDown className="w-4 h-4" />
-            Save as PDF
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={handleSaveToPdf}
+          className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1"
+        >
+          <FileDown className="w-4 h-4" />
+          Save as PDF
+        </Button>
       </div>
       
       <Textarea
@@ -61,10 +51,11 @@ const NotesPanel = () => {
         placeholder="Paste or type your notes here..."
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
+        onBlur={handleSaveNotes}
       />
       
       <p className="text-xs text-purple-200 mt-2">
-        Notes are saved locally in your browser
+        Notes are saved automatically when you click outside the text area
       </p>
     </div>
   );
