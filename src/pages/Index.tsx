@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import QuickLinkButton from "@/components/ui/QuickLinkButton";
+import QuickLinkButton from "@/components/QuickLinkButton";
 import { QuickLink } from "@/types";
 import { loadLinks, updateLink } from "@/lib/storage";
 import { toast } from "sonner";
