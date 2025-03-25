@@ -24,7 +24,7 @@ const DEFAULT_GRADIENTS = [
 export const createInitialLinks = (): QuickLink[] => {
   const links: QuickLink[] = [];
   
-  // Changed from 25 to 24 buttons
+  // Explicitly creating exactly 24 buttons
   for (let i = 0; i < 24; i++) {
     const gradientPair = DEFAULT_GRADIENTS[i % DEFAULT_GRADIENTS.length];
     links.push({
@@ -48,7 +48,14 @@ export const loadLinks = (): QuickLink[] => {
   try {
     const savedLinks = localStorage.getItem(STORAGE_KEY);
     if (savedLinks) {
-      return JSON.parse(savedLinks);
+      const parsedLinks = JSON.parse(savedLinks) as QuickLink[];
+      
+      // Ensure we only return 24 links (in case there were 25 stored previously)
+      if (parsedLinks.length > 24) {
+        return parsedLinks.slice(0, 24);
+      }
+      
+      return parsedLinks;
     }
   } catch (error) {
     console.error("Failed to load links:", error);

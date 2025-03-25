@@ -6,7 +6,7 @@ import { QuickLink } from "@/types";
 import { loadLinks, updateLink } from "@/lib/storage";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { FilePdf, Save } from "lucide-react";
+import { FileDown } from "lucide-react"; // Using FileDown instead of FilePdf which doesn't exist
 
 const Index = () => {
   const [links, setLinks] = useState<QuickLink[]>([]);
@@ -60,7 +60,7 @@ const Index = () => {
             onClick={handleSaveToPdf}
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >
-            <FilePdf className="mr-2" />
+            <FileDown className="mr-2" />
             Save as PDF
           </Button>
         </div>
