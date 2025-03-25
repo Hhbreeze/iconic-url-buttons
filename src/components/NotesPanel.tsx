@@ -19,7 +19,6 @@ const NotesPanel = () => {
   const [currentFormat, setCurrentFormat] = useState<FormatType>("none");
   const [highlightColor, setHighlightColor] = useState<HighlightColor>("yellow");
 
-  // Load notes from localStorage on mount
   useEffect(() => {
     const savedNotes = localStorage.getItem("quicklinks-notes");
     const savedFormattedNotes = localStorage.getItem("quicklinks-formatted-notes");
@@ -36,7 +35,6 @@ const NotesPanel = () => {
     }
   }, []);
 
-  // Save notes to localStorage whenever they change
   const handleSaveNotes = () => {
     if (editorRef.current) {
       const htmlContent = editorRef.current.innerHTML;
@@ -53,14 +51,12 @@ const NotesPanel = () => {
 
   const handleSaveToPdf = async () => {
     try {
-      // Create a new window
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
         toast.error("Pop-up blocked. Please allow pop-ups for this site.");
         return;
       }
 
-      // Add content and styling to the new window
       printWindow.document.write(`
         <html>
           <head>
@@ -82,11 +78,39 @@ const NotesPanel = () => {
                 background-color: #f9f9f9;
                 border-radius: 5px;
               }
-              mark.yellow { background-color: #fff9c4; }
-              mark.pink { background-color: #f8bbd0; }
-              mark.green { background-color: #c8e6c9; }
-              mark.blue { background-color: #bbdefb; }
-              mark.purple { background-color: #e1bee7; }
+              mark {
+                border-radius: 2px;
+                padding: 0 2px;
+              }
+              mark.yellow {
+                background-color: #fff9c4;
+                color: #000;
+              }
+              mark.pink {
+                background-color: #f8bbd0;
+                color: #000;
+              }
+              mark.green {
+                background-color: #c8e6c9;
+                color: #000;
+              }
+              mark.blue {
+                background-color: #bbdefb;
+                color: #000;
+              }
+              mark.purple {
+                background-color: #e1bee7;
+                color: #000;
+              }
+              strong {
+                font-weight: bold;
+              }
+              em {
+                font-style: italic;
+              }
+              u {
+                text-decoration: underline;
+              }
             </style>
           </head>
           <body>
@@ -96,14 +120,11 @@ const NotesPanel = () => {
         </html>
       `);
 
-      // Trigger print dialog once content is loaded
       printWindow.document.close();
       printWindow.onload = function() {
         printWindow.print();
-        // Keep the window open for user to select save as PDF option
+        toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
       };
-
-      toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
     } catch (error) {
       console.error("Failed to generate PDF:", error);
       toast.error("Failed to generate PDF. Please try again.");
@@ -120,13 +141,11 @@ const NotesPanel = () => {
       if (selection && selection.rangeCount > 0 && currentFormat !== "none") {
         const range = selection.getRangeAt(0);
         
-        // Only format if there's a selection
         if (!range.collapsed) {
           const selectedText = range.toString();
           
           let formattedElement: HTMLElement | null = null;
           
-          // Create appropriate element based on format type
           if (currentFormat === "bold") {
             formattedElement = document.createElement("strong");
             formattedElement.textContent = selectedText;
@@ -143,21 +162,17 @@ const NotesPanel = () => {
           }
           
           if (formattedElement) {
-            // Delete the selected text and insert the formatted element
             range.deleteContents();
             range.insertNode(formattedElement);
             
-            // Restore selection after the formatted element
             selection.removeAllRanges();
             const newRange = document.createRange();
             newRange.setStartAfter(formattedElement);
             newRange.setEndAfter(formattedElement);
             selection.addRange(newRange);
             
-            // Set focus back to editor
             editorRef.current.focus();
             
-            // Save after formatting
             handleSaveNotes();
           }
         }
@@ -272,7 +287,6 @@ const NotesPanel = () => {
   );
 };
 
-// Helper function to get CSS color values from color names
 function getColorValue(color: HighlightColor): string {
   switch (color) {
     case "yellow": return "#fff9c4";
