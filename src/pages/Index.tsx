@@ -45,16 +45,14 @@ const Index = () => {
         <div className="flex flex-col gap-6">
           {/* Quick Links Section */}
           <div className="glass-card p-4 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-xl">
-            <div className="flex justify-center">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-1">
-                {links.map((link) => (
-                  <QuickLinkButton
-                    key={link.id}
-                    link={link}
-                    onUpdate={handleUpdateLink}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-1 mx-auto max-w-fit">
+              {links.map((link) => (
+                <QuickLinkButton
+                  key={link.id}
+                  link={link}
+                  onUpdate={handleUpdateLink}
+                />
+              ))}
             </div>
           </div>
           
