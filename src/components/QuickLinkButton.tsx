@@ -106,10 +106,11 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         className={cn(
           "link-button",
           `bg-gradient-to-br ${link.gradientFrom} ${link.gradientTo}`,
-          isHovered && "ring-2 ring-white/30 scale-105",
+          isHovered && "ring-2 ring-white/70 scale-105",
           isPressed && "scale-95",
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-          !hasUrl && "border-2 border-dashed border-white/30"
+          !hasUrl && "border-2 border-dashed border-white/30",
+          "text-white font-medium" // Added font weight and text color
         )}
         onClick={handleClick}
         onContextMenu={handleEdit}
@@ -119,7 +120,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         onMouseUp={handleMouseUp}
         onDoubleClick={handleEdit}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
         <div className="flex flex-col items-center justify-center gap-2 z-10 p-3">
           {displayIcon()}
           {title && (
@@ -128,7 +129,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
             </span>
           )}
           {hasUrl && (
-            <div className="absolute bottom-1 right-1 opacity-60">
+            <div className="absolute bottom-1 right-1 opacity-80">
               <ExternalLink className="w-3 h-3 text-white" />
             </div>
           )}
