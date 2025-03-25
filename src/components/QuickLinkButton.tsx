@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
   };
 
   const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsEditing(true);
   };
@@ -112,17 +114,11 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
           "text-white font-medium border border-blueish-gray" // Keep the blueish-gray border
         )}
         onClick={handleClick}
-        onContextMenu={handleEdit}
+        onContextMenu={handleEdit} // Open edit dialog on right-click
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onDoubleClick={(e) => {
-          // Prevent double-click from triggering the normal click behavior
-          e.stopPropagation();
-          e.preventDefault();
-          handleEdit(e);
-        }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
         <div className="flex flex-col items-center justify-center gap-2 z-10 p-3">
