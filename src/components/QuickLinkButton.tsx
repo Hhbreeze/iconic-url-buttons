@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -11,10 +12,9 @@ import { Upload, Link as LinkIcon, ExternalLink } from "lucide-react";
 interface QuickLinkButtonProps {
   link: QuickLink;
   onUpdate: (updatedLink: QuickLink) => void;
-  onClickLink: (url: string) => void;
 }
 
-const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onClickLink }) => {
+const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
@@ -29,13 +29,13 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onCli
       return;
     }
     
-    // Format URL if needed and call the onClickLink prop
+    // Format URL if needed and open in a new tab
     const formattedUrl = link.url.trim().startsWith('http') 
       ? link.url.trim() 
       : `https://${link.url.trim()}`;
     
-    console.log("QuickLinkButton: Clicked on link with URL:", formattedUrl);
-    onClickLink(formattedUrl);
+    console.log("QuickLinkButton: Opening URL in new tab:", formattedUrl);
+    window.open(formattedUrl, '_blank');
   };
 
   const handleEdit = (e: React.MouseEvent) => {
