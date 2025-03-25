@@ -32,7 +32,8 @@ const WebPreview: React.FC<WebPreviewProps> = ({ url }) => {
           src={formattedUrl} 
           title="Web Preview" 
           className="w-full h-full border-none"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts allow-same-origin allow-forms"
+          referrerPolicy="no-referrer"
         />
       </div>
     </div>

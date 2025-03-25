@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onCli
       return;
     }
     
-    // Call the onClickLink prop with the URL
+    // Call the onClickLink prop with the properly formatted URL
     onClickLink(link.url);
   };
 
