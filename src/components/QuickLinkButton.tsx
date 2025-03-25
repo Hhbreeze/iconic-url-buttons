@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,9 +22,8 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
+  const handleClick = () => {
+    // Only proceed if there's a URL
     if (!link.url) {
       setIsEditing(true);
       return;
@@ -37,9 +36,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
     }
     
     // Open the URL in a new tab
-    if (formattedUrl) {
-      window.open(formattedUrl, "_blank", "noopener,noreferrer");
-    }
+    window.open(formattedUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -140,6 +137,9 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         <DialogContent className="glass-card bg-white/95 dark:bg-black/80 max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-medium">Edit Quick Link</DialogTitle>
+            <DialogDescription>
+              Configure your quick access link
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
