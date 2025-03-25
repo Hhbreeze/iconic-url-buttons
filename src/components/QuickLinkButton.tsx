@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Link as LinkIcon } from "lucide-react";
+import { Upload, Link as LinkIcon, ExternalLink } from "lucide-react";
 
 interface QuickLinkButtonProps {
   link: QuickLink;
@@ -23,14 +23,23 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
   const [isPressed, setIsPressed] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
     if (!link.url) {
-      e.preventDefault();
       setIsEditing(true);
       return;
     }
     
+    // Format URL if needed
+    let formattedUrl = link.url;
+    if (formattedUrl && !formattedUrl.match(/^https?:\/\//)) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
+    
     // Open the URL in a new tab
-    window.open(link.url, "_blank", "noopener,noreferrer");
+    if (formattedUrl) {
+      window.open(formattedUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -88,14 +97,19 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
     return <LinkIcon className="w-8 h-8 text-white/70" />;
   };
 
+  // Check if the button has a URL
+  const hasUrl = !!link.url;
+
   return (
     <>
       <button
         className={cn(
           "link-button",
-          `${link.gradientFrom} ${link.gradientTo}`,
-          isHovered && "ring-2 ring-white/30",
-          isPressed && "active:scale-[0.98]"
+          `bg-gradient-to-br ${link.gradientFrom} ${link.gradientTo}`,
+          isHovered && "ring-2 ring-white/30 scale-105",
+          isPressed && "scale-95",
+          "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
+          !hasUrl && "border-2 border-dashed border-white/30"
         )}
         onClick={handleClick}
         onContextMenu={handleEdit}
@@ -105,13 +119,18 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         onMouseUp={handleMouseUp}
         onDoubleClick={handleEdit}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-        <div className="flex flex-col items-center justify-center gap-2 z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+        <div className="flex flex-col items-center justify-center gap-2 z-10 p-3">
           {displayIcon()}
           {title && (
-            <span className="text-xs font-medium tracking-wide truncate max-w-full text-white drop-shadow-sm">
+            <span className="text-xs font-medium tracking-wide truncate max-w-full text-white drop-shadow-md">
               {title}
             </span>
+          )}
+          {hasUrl && (
+            <div className="absolute bottom-1 right-1 opacity-60">
+              <ExternalLink className="w-3 h-3 text-white" />
+            </div>
           )}
         </div>
       </button>

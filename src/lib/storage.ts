@@ -1,18 +1,23 @@
 
 import { QuickLink } from "@/types";
 
-// Default gradient pairs for buttons
+// Default gradient pairs for buttons with more attractive colors
 const DEFAULT_GRADIENTS = [
-  { from: "from-blue-400", to: "to-indigo-500" },
-  { from: "from-purple-400", to: "to-pink-500" },
-  { from: "from-green-400", to: "to-teal-500" },
-  { from: "from-amber-400", to: "to-orange-500" },
-  { from: "from-rose-400", to: "to-red-500" },
-  { from: "from-cyan-400", to: "to-blue-500" },
-  { from: "from-fuchsia-400", to: "to-purple-500" },
-  { from: "from-yellow-400", to: "to-amber-500" },
-  { from: "from-lime-400", to: "to-green-500" },
-  { from: "from-sky-400", to: "to-indigo-500" },
+  { from: "from-blue-500", to: "to-indigo-600" },
+  { from: "from-purple-500", to: "to-pink-600" },
+  { from: "from-green-500", to: "to-teal-600" },
+  { from: "from-amber-500", to: "to-orange-600" },
+  { from: "from-rose-500", to: "to-red-600" },
+  { from: "from-cyan-500", to: "to-blue-600" },
+  { from: "from-fuchsia-500", to: "to-purple-600" },
+  { from: "from-yellow-400", to: "to-amber-600" },
+  { from: "from-lime-500", to: "to-green-600" },
+  { from: "from-sky-500", to: "to-indigo-600" },
+  { from: "from-violet-500", to: "to-purple-700" },
+  { from: "from-pink-500", to: "to-rose-600" },
+  { from: "from-indigo-500", to: "to-blue-700" },
+  { from: "from-emerald-500", to: "to-green-700" },
+  { from: "from-orange-500", to: "to-red-600" },
 ];
 
 // Initial creation of links
