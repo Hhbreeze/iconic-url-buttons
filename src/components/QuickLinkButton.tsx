@@ -103,12 +103,12 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
       <button
         className={cn(
           "link-button",
-          "bg-blueish-gray", // Using our new blueish-gray background
+          "bg-blueish-gray", // Using our blueish-gray background
           isHovered && "ring-2 ring-white/70 scale-105",
           isPressed && "scale-95",
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
           !hasUrl && "border-2 border-dashed border-white/30",
-          "text-white font-medium border border-blueish-gray" // Keep the blueish-gray border
+          "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]" // Removed border, added shadow for darker edge
         )}
         onClick={handleClick}
         onContextMenu={handleEdit} // Open edit dialog on right-click
