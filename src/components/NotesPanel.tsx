@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2 } from "lucide-react";
+import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2, X } from "lucide-react";
 import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -35,27 +35,22 @@ const NotesPanel = () => {
         editorRef.current.innerHTML = savedFormattedNotes;
       }
       
-      // Initialize history with the loaded content
       setNotesHistory([savedFormattedNotes]);
       setHistoryIndex(0);
     }
   }, []);
 
   const saveToHistory = (htmlContent: string) => {
-    // Remove any future history if we're not at the end
     const newHistory = historyIndex < notesHistory.length - 1 
       ? notesHistory.slice(0, historyIndex + 1) 
       : [...notesHistory];
     
-    // Don't add if content is the same as the last history item
     if (newHistory.length > 0 && newHistory[newHistory.length - 1] === htmlContent) {
       return;
     }
     
-    // Add current content to history
     newHistory.push(htmlContent);
     
-    // Limit history to prevent excessive memory usage (e.g., keep last 50 changes)
     if (newHistory.length > 50) {
       newHistory.shift();
     }
@@ -74,7 +69,6 @@ const NotesPanel = () => {
       setNotes(textContent);
       setFormattedNotes(htmlContent);
       
-      // Save to history when explicitly saving
       saveToHistory(htmlContent);
       
       toast.success("Notes saved successfully");
@@ -86,14 +80,12 @@ const NotesPanel = () => {
       const newIndex = historyIndex - 1;
       const previousContent = notesHistory[newIndex];
       
-      // Update the editor with the previous content
       if (editorRef.current && previousContent) {
         editorRef.current.innerHTML = previousContent;
         setFormattedNotes(previousContent);
         setNotes(editorRef.current.innerText);
         setHistoryIndex(newIndex);
         
-        // Save to localStorage
         localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
         localStorage.setItem("quicklinks-formatted-notes", previousContent);
         
@@ -112,7 +104,6 @@ const NotesPanel = () => {
         return;
       }
 
-      // Create an iframe for printing instead of directly writing to document
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -137,7 +128,6 @@ const NotesPanel = () => {
                   border-radius: 5px;
                 }
                 
-                /* Critical: Make highlighting styles !important and ensure they apply in print mode */
                 mark {
                   display: inline-block !important;
                   border-radius: 2px !important;
@@ -174,7 +164,6 @@ const NotesPanel = () => {
                 }
               }
               
-              /* Non-print styles */
               body {
                 font-family: Arial, sans-serif;
                 line-height: 1.6;
@@ -231,12 +220,9 @@ const NotesPanel = () => {
             <h1>My Notes</h1>
             <div class="notes-content" id="notes-content"></div>
             <script>
-              // Wait for DOM to be ready
               document.addEventListener('DOMContentLoaded', function() {
-                // Insert the notes content
                 document.getElementById('notes-content').innerHTML = \`${formattedNotes.replace(/`/g, "\\`")}\`;
                 
-                // Give a moment for styles to apply properly before printing
                 setTimeout(function() {
                   window.focus();
                   window.print();
@@ -249,12 +235,9 @@ const NotesPanel = () => {
       
       printWindow.document.close();
       
-      // Force styles to recompute and print after a short delay
       printWindow.onload = function() {
-        // Do one final check of the highlight marks before printing
         const marks = printWindow.document.querySelectorAll('mark');
         marks.forEach(mark => {
-          // Ensure class is preserved and styles are applied
           const colorClass = mark.className;
           if (colorClass) {
             mark.setAttribute('style', `background-color: var(--highlight-${colorClass}) !important; color: #000 !important;`);
@@ -315,11 +298,9 @@ const NotesPanel = () => {
             
             editorRef.current.focus();
             
-            // Save current state to history after formatting
             const htmlContent = editorRef.current.innerHTML;
             saveToHistory(htmlContent);
             
-            // Also save to localStorage
             localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
             localStorage.setItem("quicklinks-formatted-notes", htmlContent);
             setNotes(editorRef.current.innerText);
@@ -334,15 +315,52 @@ const NotesPanel = () => {
     if (editorRef.current) {
       const htmlContent = editorRef.current.innerHTML;
       
-      // Check if the content has actually changed from the last history item
       if (notesHistory.length === 0 || htmlContent !== notesHistory[historyIndex]) {
         saveToHistory(htmlContent);
         
-        // Save to localStorage
         localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
         localStorage.setItem("quicklinks-formatted-notes", htmlContent);
         setNotes(editorRef.current.innerText);
         setFormattedNotes(htmlContent);
+      }
+    }
+  };
+
+  const removeFormatting = () => {
+    if (editorRef.current) {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        
+        if (!range.collapsed) {
+          const selectedHtml = range.cloneContents();
+          const textContent = selectedHtml.textContent;
+          
+          const textNode = document.createTextNode(textContent || "");
+          
+          range.deleteContents();
+          range.insertNode(textNode);
+          
+          selection.removeAllRanges();
+          const newRange = document.createRange();
+          newRange.setStartAfter(textNode);
+          newRange.setEndAfter(textNode);
+          selection.addRange(newRange);
+          
+          editorRef.current.focus();
+          
+          const htmlContent = editorRef.current.innerHTML;
+          saveToHistory(htmlContent);
+          
+          localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
+          localStorage.setItem("quicklinks-formatted-notes", htmlContent);
+          setNotes(editorRef.current.innerText);
+          setFormattedNotes(htmlContent);
+          
+          toast.info("Formatting removed");
+        } else {
+          toast.info("Select text to remove formatting");
+        }
       }
     }
   };
@@ -422,6 +440,16 @@ const NotesPanel = () => {
               </div>
             </PopoverContent>
           </Popover>
+          
+          <Button 
+            size="icon"
+            variant="ghost"
+            onClick={removeFormatting}
+            className="h-9 w-9 bg-white/10 text-white hover:bg-indigo-700"
+            title="Remove Formatting"
+          >
+            <X className="h-4 w-4" />
+          </Button>
           
           <Button 
             size="icon"
