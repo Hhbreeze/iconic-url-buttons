@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -30,14 +29,8 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onCli
       return;
     }
     
-    // Format URL if needed
-    let formattedUrl = link.url;
-    if (formattedUrl && !formattedUrl.match(/^https?:\/\//)) {
-      formattedUrl = `https://${formattedUrl}`;
-    }
-    
-    // Call the onClickLink prop instead of opening directly
-    onClickLink(formattedUrl);
+    // Call the onClickLink prop with the URL
+    onClickLink(link.url);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -110,7 +103,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate, onCli
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
           !hasUrl && "border-2 border-solid border-white/30", 
           "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]", 
-          "h-[70px] w-[70px]" // Made buttons even smaller
+          "h-[70px] w-[70px]"
         )}
         onClick={handleClick}
         onContextMenu={handleEdit}

@@ -25,7 +25,10 @@ const Index = () => {
   };
 
   const handleLinkClick = (url: string) => {
-    setCurrentUrl(url);
+    // Ensure URL has proper format before setting
+    const formattedUrl = url.trim().startsWith('http') ? url : `https://${url}`;
+    console.log("Link clicked, setting URL to:", formattedUrl);
+    setCurrentUrl(formattedUrl);
   };
 
   if (!loaded) {
