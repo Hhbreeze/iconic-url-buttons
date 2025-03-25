@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft } from "lucide-react";
+import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,6 +14,8 @@ type HighlightColor = "yellow" | "pink" | "green" | "blue" | "purple";
 const NotesPanel = () => {
   const [notes, setNotes] = useState<string>("");
   const [formattedNotes, setFormattedNotes] = useState<string>("");
+  const [notesHistory, setNotesHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const notesRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const [currentFormat, setCurrentFormat] = useState<FormatType>("none");
@@ -33,8 +34,35 @@ const NotesPanel = () => {
       if (editorRef.current) {
         editorRef.current.innerHTML = savedFormattedNotes;
       }
+      
+      // Initialize history with the loaded content
+      setNotesHistory([savedFormattedNotes]);
+      setHistoryIndex(0);
     }
   }, []);
+
+  const saveToHistory = (htmlContent: string) => {
+    // Remove any future history if we're not at the end
+    const newHistory = historyIndex < notesHistory.length - 1 
+      ? notesHistory.slice(0, historyIndex + 1) 
+      : [...notesHistory];
+    
+    // Don't add if content is the same as the last history item
+    if (newHistory.length > 0 && newHistory[newHistory.length - 1] === htmlContent) {
+      return;
+    }
+    
+    // Add current content to history
+    newHistory.push(htmlContent);
+    
+    // Limit history to prevent excessive memory usage (e.g., keep last 50 changes)
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    }
+    
+    setNotesHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
 
   const handleSaveNotes = () => {
     if (editorRef.current) {
@@ -46,7 +74,33 @@ const NotesPanel = () => {
       setNotes(textContent);
       setFormattedNotes(htmlContent);
       
+      // Save to history when explicitly saving
+      saveToHistory(htmlContent);
+      
       toast.success("Notes saved successfully");
+    }
+  };
+
+  const handleUndo = () => {
+    if (historyIndex > 0 && notesHistory.length > 1) {
+      const newIndex = historyIndex - 1;
+      const previousContent = notesHistory[newIndex];
+      
+      // Update the editor with the previous content
+      if (editorRef.current && previousContent) {
+        editorRef.current.innerHTML = previousContent;
+        setFormattedNotes(previousContent);
+        setNotes(editorRef.current.innerText);
+        setHistoryIndex(newIndex);
+        
+        // Save to localStorage
+        localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
+        localStorage.setItem("quicklinks-formatted-notes", previousContent);
+        
+        toast.info("Undid last change");
+      }
+    } else {
+      toast.info("Nothing to undo");
     }
   };
 
@@ -261,9 +315,34 @@ const NotesPanel = () => {
             
             editorRef.current.focus();
             
-            handleSaveNotes();
+            // Save current state to history after formatting
+            const htmlContent = editorRef.current.innerHTML;
+            saveToHistory(htmlContent);
+            
+            // Also save to localStorage
+            localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
+            localStorage.setItem("quicklinks-formatted-notes", htmlContent);
+            setNotes(editorRef.current.innerText);
+            setFormattedNotes(htmlContent);
           }
         }
+      }
+    }
+  };
+
+  const handleContentChange = () => {
+    if (editorRef.current) {
+      const htmlContent = editorRef.current.innerHTML;
+      
+      // Check if the content has actually changed from the last history item
+      if (notesHistory.length === 0 || htmlContent !== notesHistory[historyIndex]) {
+        saveToHistory(htmlContent);
+        
+        // Save to localStorage
+        localStorage.setItem("quicklinks-notes", editorRef.current.innerText);
+        localStorage.setItem("quicklinks-formatted-notes", htmlContent);
+        setNotes(editorRef.current.innerText);
+        setFormattedNotes(htmlContent);
       }
     }
   };
@@ -343,6 +422,16 @@ const NotesPanel = () => {
               </div>
             </PopoverContent>
           </Popover>
+          
+          <Button 
+            size="icon"
+            variant="ghost"
+            onClick={handleUndo}
+            className="h-9 w-9 bg-white/10 text-white hover:bg-indigo-700"
+            title="Undo"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
         </ToggleGroup>
       </div>
       
@@ -353,7 +442,8 @@ const NotesPanel = () => {
           contentEditable
           onKeyUp={handleEditorInput}
           onMouseUp={handleEditorInput}
-          onBlur={handleSaveNotes}
+          onBlur={handleContentChange}
+          onInput={handleContentChange}
           dangerouslySetInnerHTML={{ __html: formattedNotes }}
           style={{
             minHeight: "200px",
