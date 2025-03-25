@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { QuickLink } from "@/types";
 import { cn } from "@/lib/utils";
@@ -118,7 +117,12 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         onMouseLeave={handleMouseLeave}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onDoubleClick={handleEdit}
+        onDoubleClick={(e) => {
+          // Prevent double-click from triggering the normal click behavior
+          e.stopPropagation();
+          e.preventDefault();
+          handleEdit(e);
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
         <div className="flex flex-col items-center justify-center gap-2 z-10 p-3">
