@@ -58,13 +58,69 @@ const NotesPanel = () => {
         return;
       }
 
-      // Create a complete HTML document with all necessary styles
+      // Create an iframe for printing instead of directly writing to document
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
           <head>
             <title>Notes PDF</title>
             <style>
+              @media print {
+                body {
+                  font-family: Arial, sans-serif;
+                  line-height: 1.6;
+                  margin: 40px;
+                  white-space: pre-wrap;
+                }
+                h1 {
+                  color: #333;
+                  margin-bottom: 20px;
+                }
+                .notes-content {
+                  border: 1px solid #ddd;
+                  padding: 20px;
+                  background-color: #f9f9f9;
+                  border-radius: 5px;
+                }
+                
+                /* Critical: Make highlighting styles !important and ensure they apply in print mode */
+                mark {
+                  display: inline-block !important;
+                  border-radius: 2px !important;
+                  padding: 0 2px !important;
+                }
+                mark.yellow {
+                  background-color: #fff9c4 !important;
+                  color: #000 !important;
+                }
+                mark.pink {
+                  background-color: #f8bbd0 !important;
+                  color: #000 !important;
+                }
+                mark.green {
+                  background-color: #c8e6c9 !important;
+                  color: #000 !important;
+                }
+                mark.blue {
+                  background-color: #bbdefb !important;
+                  color: #000 !important;
+                }
+                mark.purple {
+                  background-color: #e1bee7 !important;
+                  color: #000 !important;
+                }
+                strong {
+                  font-weight: bold !important;
+                }
+                em {
+                  font-style: italic !important;
+                }
+                u {
+                  text-decoration: underline !important;
+                }
+              }
+              
+              /* Non-print styles */
               body {
                 font-family: Arial, sans-serif;
                 line-height: 1.6;
@@ -82,6 +138,7 @@ const NotesPanel = () => {
                 border-radius: 5px;
               }
               mark {
+                display: inline-block;
                 border-radius: 2px;
                 padding: 0 2px;
               }
@@ -118,22 +175,43 @@ const NotesPanel = () => {
           </head>
           <body>
             <h1>My Notes</h1>
-            <div class="notes-content">${formattedNotes}</div>
+            <div class="notes-content" id="notes-content"></div>
+            <script>
+              // Wait for DOM to be ready
+              document.addEventListener('DOMContentLoaded', function() {
+                // Insert the notes content
+                document.getElementById('notes-content').innerHTML = \`${formattedNotes.replace(/`/g, "\\`")}\`;
+                
+                // Give a moment for styles to apply properly before printing
+                setTimeout(function() {
+                  window.focus();
+                  window.print();
+                }, 1000);
+              });
+            </script>
           </body>
         </html>
       `);
-
-      // Force the browser to apply the styles before printing
+      
       printWindow.document.close();
       
-      // Make sure everything is loaded before printing
+      // Force styles to recompute and print after a short delay
       printWindow.onload = function() {
-        // Add a longer delay to ensure styles are fully applied
+        // Do one final check of the highlight marks before printing
+        const marks = printWindow.document.querySelectorAll('mark');
+        marks.forEach(mark => {
+          // Ensure class is preserved and styles are applied
+          const colorClass = mark.className;
+          if (colorClass) {
+            mark.setAttribute('style', `background-color: var(--highlight-${colorClass}) !important; color: #000 !important;`);
+          }
+        });
+        
         setTimeout(() => {
-          printWindow.focus(); // Make sure the window has focus
+          printWindow.focus();
           printWindow.print();
           toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
-        }, 500);
+        }, 1000);
       };
     } catch (error) {
       console.error("Failed to generate PDF:", error);
