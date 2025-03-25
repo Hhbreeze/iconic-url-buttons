@@ -50,10 +50,10 @@ const Index = () => {
         </header>
 
         <div className="flex gap-6 flex-col md:flex-row">
-          <div className="md:flex-1 space-y-6">
+          <div className="md:flex-1 space-y-4">
             {/* Quick Links Section */}
-            <div className="glass-card p-6 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-xl">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-3">
+            <div className="glass-card p-4 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-xl">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-2">
                 {links.map((link) => (
                   <QuickLinkButton
                     key={link.id}
