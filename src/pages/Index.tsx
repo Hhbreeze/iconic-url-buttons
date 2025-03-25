@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import QuickLinkButton from "@/components/QuickLinkButton";
+import QuickLinkButton from "@/components/ui/QuickLinkButton";
 import { QuickLink } from "@/types";
 import { loadLinks, updateLink } from "@/lib/storage";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const Index = () => {
   const [links, setLinks] = useState<QuickLink[]>([]);
