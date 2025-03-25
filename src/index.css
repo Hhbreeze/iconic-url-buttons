@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,12 +101,13 @@
   }
 
   .link-button {
-    @apply relative flex items-center justify-center aspect-square p-4
+    @apply relative flex items-center justify-center
            overflow-hidden rounded-xl
-           border border-white/40
            shadow-md hover:shadow-xl
            transition-all duration-300
            backdrop-blur-md;
+    height: 80px;
+    width: 80px;
   }
   
   .border-blueish-gray {

@@ -107,8 +107,9 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
           isHovered && "ring-2 ring-white/70 scale-105",
           isPressed && "scale-95",
           "relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-200",
-          !hasUrl && "border-2 border-dashed border-white/30",
-          "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]" // Removed border, added shadow for darker edge
+          !hasUrl && "border-2 border-solid border-white/30", // Changed dashed to solid
+          "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]", // Kept the shadow for darker edge
+          "h-[80px] w-[80px]" // Made buttons smaller with fixed dimensions
         )}
         onClick={handleClick}
         onContextMenu={handleEdit} // Open edit dialog on right-click
@@ -118,7 +119,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         onMouseUp={handleMouseUp}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
-        <div className="flex flex-col items-center justify-center gap-2 z-10 p-3">
+        <div className="flex flex-col items-center justify-center gap-1 z-10 p-2">
           {displayIcon()}
           {title && (
             <span className="text-xs font-medium tracking-wide truncate max-w-full text-white drop-shadow-md">
