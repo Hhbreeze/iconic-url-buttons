@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,7 @@ const NotesPanel = () => {
         return;
       }
 
+      // We need to make sure the HTML content is properly formatted with all styling
       printWindow.document.write(`
         <html>
           <head>
@@ -122,8 +124,10 @@ const NotesPanel = () => {
 
       printWindow.document.close();
       printWindow.onload = function() {
-        printWindow.print();
-        toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
+        setTimeout(() => {
+          printWindow.print();
+          toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
+        }, 300);
       };
     } catch (error) {
       console.error("Failed to generate PDF:", error);
