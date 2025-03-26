@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,7 @@ const NotesPanel = () => {
                   border-radius: 5px;
                 }
                 
+                /* Important: Direct CSS for highlighting */
                 mark {
                   display: inline-block !important;
                   border-radius: 2px !important;
@@ -180,10 +182,12 @@ const NotesPanel = () => {
                 background-color: #f9f9f9;
                 border-radius: 5px;
               }
+              
+              /* Direct highlighting styles for the PDF view */
               mark {
-                display: inline-block;
-                border-radius: 2px;
-                padding: 0 2px;
+                display: inline-block !important;
+                border-radius: 2px !important;
+                padding: 0 2px !important;
               }
               mark.yellow {
                 background-color: #fff9c4 !important;
@@ -223,7 +227,37 @@ const NotesPanel = () => {
               document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('notes-content').innerHTML = \`${formattedNotes.replace(/`/g, "\\`")}\`;
                 
+                // Apply styles to highlights right after setting the content
                 setTimeout(function() {
+                  const marks = document.querySelectorAll('mark');
+                  marks.forEach(mark => {
+                    const colorClass = mark.className;
+                    if (colorClass) {
+                      // Apply inline styles to ensure highlighting renders
+                      switch(colorClass) {
+                        case 'yellow':
+                          mark.style.backgroundColor = '#fff9c4';
+                          break;
+                        case 'pink':
+                          mark.style.backgroundColor = '#f8bbd0';
+                          break;
+                        case 'green':
+                          mark.style.backgroundColor = '#c8e6c9';
+                          break;
+                        case 'blue':
+                          mark.style.backgroundColor = '#bbdefb';
+                          break;
+                        case 'purple':
+                          mark.style.backgroundColor = '#e1bee7';
+                          break;
+                      }
+                      mark.style.color = '#000';
+                      mark.style.display = 'inline-block';
+                      mark.style.borderRadius = '2px';
+                      mark.style.padding = '0 2px';
+                    }
+                  });
+                  
                   window.focus();
                   window.print();
                 }, 1000);
@@ -235,16 +269,39 @@ const NotesPanel = () => {
       
       printWindow.document.close();
       
+      // Add a separate load handler to ensure styles are applied
       printWindow.onload = function() {
-        const marks = printWindow.document.querySelectorAll('mark');
-        marks.forEach(mark => {
-          const colorClass = mark.className;
-          if (colorClass) {
-            mark.setAttribute('style', `background-color: var(--highlight-${colorClass}) !important; color: #000 !important;`);
-          }
-        });
-        
         setTimeout(() => {
+          // Force apply styles again to make sure they stick
+          const marks = printWindow.document.querySelectorAll('mark');
+          marks.forEach(mark => {
+            const colorClass = mark.className;
+            if (colorClass) {
+              // Apply the styles directly as inline styles
+              switch(colorClass) {
+                case 'yellow':
+                  mark.style.backgroundColor = '#fff9c4';
+                  break;
+                case 'pink':
+                  mark.style.backgroundColor = '#f8bbd0';
+                  break;
+                case 'green':
+                  mark.style.backgroundColor = '#c8e6c9';
+                  break;
+                case 'blue':
+                  mark.style.backgroundColor = '#bbdefb';
+                  break;
+                case 'purple':
+                  mark.style.backgroundColor = '#e1bee7';
+                  break;
+              }
+              mark.style.color = '#000';
+              mark.style.display = 'inline-block';
+              mark.style.borderRadius = '2px';
+              mark.style.padding = '0 2px';
+            }
+          });
+          
           printWindow.focus();
           printWindow.print();
           toast.success("Notes ready for PDF export. Select 'Save as PDF' in the print dialog.");
