@@ -5,16 +5,33 @@ import NotesPanel from "@/components/NotesPanel";
 import { QuickLink } from "@/types";
 import { loadLinks, updateLink } from "@/lib/storage";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { InfoIcon } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [links, setLinks] = useState<QuickLink[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const quickLinks = loadLinks();
     setLinks(quickLinks);
     setLoaded(true);
-  }, []);
+
+    // Show a mobile-specific toast on first load
+    if (isMobile) {
+      toast.info(
+        "Tip: Long press any button to edit its link",
+        { duration: 5000 }
+      );
+    }
+  }, [isMobile]);
 
   const handleUpdateLink = (updatedLink: QuickLink) => {
     const updatedLinks = updateLink(links, updatedLink);
@@ -38,7 +55,8 @@ const Index = () => {
             TapBoard
           </h1>
           <p className="text-purple-200 max-w-2xl mx-auto">
-            Access your favorite websites with a single click. Right-click any button to edit.
+            Access your favorite websites with a single click. 
+            {isMobile ? " Long press any button to edit." : " Right-click any button to edit."}
           </p>
         </header>
 
@@ -62,10 +80,28 @@ const Index = () => {
           </div>
         </div>
 
-        <footer className="text-center text-sm text-purple-200 mt-6">
-          <p>
-            Tip: Right-click any button to edit
-          </p>
+        <footer className="text-center text-sm text-purple-200 mt-6 flex items-center justify-center">
+          {isMobile ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center">
+                    <span>Tip: Long press any button to edit</span>
+                    <InfoIcon className="w-4 h-4 ml-1" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs text-center">
+                    Tap to open the website. Long press (hold) for about 1 second to edit the link.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <p>
+              Tip: Right-click any button to edit
+            </p>
+          )}
         </footer>
       </div>
     </div>

@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { Upload, Link as LinkIcon, ExternalLink, Pencil } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface QuickLinkButtonProps {
   link: QuickLink;
@@ -21,6 +22,8 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
   const [iconPreview, setIconPreview] = useState<string | null>(link.icon);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
 
   const handleClick = () => {
     // Only proceed if there's a URL
@@ -72,6 +75,38 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
     reader.readAsDataURL(file);
   };
 
+  // Mobile touch handlers
+  const handleTouchStart = () => {
+    // Start a timer when the user holds their finger on the button
+    if (isMobile) {
+      setIsPressed(true);
+      const timer = setTimeout(() => {
+        setIsEditing(true);
+        setIsPressed(false);
+      }, 800); // 800ms long press to edit
+      setLongPressTimer(timer);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    // Clear the timer if the user lifts their finger before the long press is registered
+    if (isMobile && longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+      setIsPressed(false);
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Cancel the long press if the user moves their finger
+    if (isMobile && longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+      setIsPressed(false);
+    }
+  };
+
+  // Desktop handlers
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
     setIsHovered(false);
@@ -110,7 +145,14 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
           "text-white font-medium shadow-[0_0_0_1.5px_rgba(64,62,67,0.8)]", 
           "h-[70px] w-[70px]"
         )}
-        onClick={handleClick}
+        onClick={isMobile ? undefined : handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={() => {
+          handleTouchEnd();
+          // Only trigger click if we don't have a long press going
+          if (!longPressTimer && hasUrl) handleClick();
+        }}
+        onTouchMove={handleTouchMove}
         onContextMenu={handleEdit}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -128,6 +170,11 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
           {hasUrl && (
             <div className="absolute bottom-1 right-1 opacity-80">
               <ExternalLink className="w-3 h-3 text-white" />
+            </div>
+          )}
+          {isMobile && (
+            <div className="absolute top-1 right-1 opacity-70">
+              <Pencil className="w-3 h-3 text-white" />
             </div>
           )}
         </div>
