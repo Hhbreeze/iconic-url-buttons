@@ -136,6 +136,11 @@ const NotesPanel = () => {
                 padding: 20px;
                 background-color: #f9f9f9;
                 border-radius: 5px;
+                ${columnCount !== "1" ? `
+                column-count: ${columnCount};
+                column-gap: 40px;
+                column-rule: 1px solid #ddd;
+                ` : ''}
               }
               
               /* Direct highlighting styles - critical for PDF rendering */
@@ -185,6 +190,13 @@ const NotesPanel = () => {
                   -webkit-print-color-adjust: exact !important;
                   print-color-adjust: exact !important;
                   color-adjust: exact !important;
+                }
+                .notes-content {
+                  ${columnCount !== "1" ? `
+                  column-count: ${columnCount} !important;
+                  column-gap: 40px !important;
+                  column-rule: 1px solid #ddd !important;
+                  ` : ''}
                 }
               }
             </style>
