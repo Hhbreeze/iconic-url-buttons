@@ -29,6 +29,7 @@ const FlashCard = ({
   const [userAnswer, setUserAnswer] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [matchPercentage, setMatchPercentage] = useState(0);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -38,21 +39,41 @@ const FlashCard = ({
     if (type === "truefalse") {
       // Convert to lowercase and trim for comparison
       setIsCorrect(userAnswer.toLowerCase().trim() === back.toLowerCase().trim());
+      setMatchPercentage(userAnswer.toLowerCase().trim() === back.toLowerCase().trim() ? 100 : 0);
     } else if (type === "multiplechoice") {
       setIsCorrect(userAnswer.toLowerCase().trim() === back.toLowerCase().trim());
+      setMatchPercentage(userAnswer.toLowerCase().trim() === back.toLowerCase().trim() ? 100 : 0);
     } else {
-      // For fill in the blank, check if answer contains key parts of the back
-      const backWords = back.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-      const userWords = userAnswer.toLowerCase().trim();
+      // For fill in the blank, implement a more flexible matching algorithm
+      const correctAnswer = back.toLowerCase().trim();
+      const userAnswerText = userAnswer.toLowerCase().trim();
       
-      // Check if significant words from the answer are in the user's response
-      let matchCount = 0;
-      for (const word of backWords) {
-        if (userWords.includes(word)) matchCount++;
+      // Extract significant words from the correct answer (words longer than 3 characters)
+      const significantWords = correctAnswer.split(/\s+/)
+        .filter(word => word.length > 3)
+        .map(word => word.replace(/[.,;:!?"'()]/g, '')); // Strip punctuation
+      
+      if (significantWords.length === 0) {
+        // If no significant words, fall back to direct comparison
+        setIsCorrect(userAnswerText === correctAnswer);
+        setMatchPercentage(userAnswerText === correctAnswer ? 100 : 0);
+        return;
       }
       
-      // Consider it correct if at least 50% of key words match
-      setIsCorrect(matchCount >= Math.max(1, Math.floor(backWords.length * 0.5)));
+      // Count how many significant words from the correct answer appear in the user's answer
+      let matchCount = 0;
+      significantWords.forEach(word => {
+        if (userAnswerText.includes(word)) {
+          matchCount++;
+        }
+      });
+      
+      // Calculate match percentage
+      const percentage = Math.round((matchCount / significantWords.length) * 100);
+      setMatchPercentage(percentage);
+      
+      // Consider the answer correct if it meets the threshold (30% match)
+      setIsCorrect(percentage >= 30);
     }
     
     setShowResult(true);
@@ -62,6 +83,7 @@ const FlashCard = ({
     setUserAnswer("");
     setShowResult(false);
     setIsFlipped(false);
+    setMatchPercentage(0);
   };
 
   const handleNextCard = () => {
@@ -154,9 +176,16 @@ const FlashCard = ({
             {showResult && (
               <div className="mt-4 flex flex-col items-center">
                 {isCorrect ? (
-                  <div className="flex items-center text-green-400">
-                    <Smile className="w-8 h-8 mr-2" />
-                    <span className="text-lg">Correct!</span>
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center text-green-400">
+                      <Smile className="w-8 h-8 mr-2" />
+                      <span className="text-lg">Correct!</span>
+                    </div>
+                    {type === "fillinblank" && matchPercentage < 100 && (
+                      <div className="text-sm text-green-300 mt-1">
+                        Match: {matchPercentage}% - Close enough!
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex items-center text-red-400">
