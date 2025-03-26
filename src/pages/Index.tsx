@@ -25,7 +25,7 @@ const Index = () => {
   if (!loaded) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-lg">Loading your quick links...</div>
+        <div className="animate-pulse text-lg">Loading your links...</div>
       </div>
     );
   }
@@ -35,7 +35,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in">
         <header className="text-center space-y-2">
           <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-white">
-            Quick Links
+            TapBoard
           </h1>
           <p className="text-purple-200 max-w-2xl mx-auto">
             Access your favorite websites with a single click. Right-click any button to edit.
