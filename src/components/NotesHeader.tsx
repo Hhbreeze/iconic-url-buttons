@@ -43,14 +43,6 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
         />
         <Button
           size="sm"
-          onClick={handleSaveNotes}
-          variant="outline"
-          className="text-white border-white/20 bg-white/5 hover:bg-white/10"
-        >
-          Save
-        </Button>
-        <Button
-          size="sm"
           onClick={onOpenFlashCards}
           className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1"
         >
