@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import NotesColumnSelector from "./NotesColumnSelector";
 import { ColumnCount } from "@/utils/noteFormatters";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NotesHeaderProps {
   columnCount: ColumnCount;
@@ -25,6 +26,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
   handleOpenAIFlashCards,
   notes
 }) => {
+  const isMobile = useIsMobile();
   
   const onOpenFlashCards = () => {
     if (!notes || notes.trim().length === 0) {
@@ -45,36 +47,36 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
   };
   
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-4">
       <h2 className="text-xl font-medium text-white">Notes</h2>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <NotesColumnSelector 
           columnCount={columnCount} 
           onColumnChange={onColumnChange} 
         />
         <Button
-          size="sm"
+          size={isMobile ? "sm" : "sm"}
           onClick={onOpenAIFlashCards}
           className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1"
         >
           <Sparkles className="w-4 h-4" />
-          AI Cards
+          {isMobile ? "AI" : "AI Cards"}
         </Button>
         <Button
-          size="sm"
+          size={isMobile ? "sm" : "sm"}
           onClick={onOpenFlashCards}
           className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1"
         >
           <BookOpen className="w-4 h-4" />
-          Flash Cards
+          {isMobile ? "Cards" : "Flash Cards"}
         </Button>
         <Button
-          size="sm"
+          size={isMobile ? "sm" : "sm"}
           onClick={handleSaveToPdf}
           className="bg-amber-600 hover:bg-amber-700 text-white flex items-center gap-1"
         >
           <FileDown className="w-4 h-4" />
-          Export PDF
+          {isMobile ? "PDF" : "Export PDF"}
         </Button>
       </div>
     </div>
