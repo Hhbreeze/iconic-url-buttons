@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import FlashCardTraining from "./FlashCardTraining";
+import AIFlashCardTraining from "./AIFlashCardTraining";
 import NotesToolbar from "./NotesToolbar";
 import NotesHeader from "./NotesHeader";
 import NotesEditor from "./NotesEditor";
@@ -18,9 +18,9 @@ const NotesPanel = () => {
   const [currentFormat, setCurrentFormat] = useState<FormatType>("none");
   const [highlightColor, setHighlightColor] = useState<HighlightColor>("yellow");
   const [isFlashCardOpen, setIsFlashCardOpen] = useState(false);
+  const [isAIFlashCardOpen, setIsAIFlashCardOpen] = useState(false);
   const [columnCount, setColumnCount] = useState<ColumnCount>("1");
 
-  // Load saved notes on component mount
   useEffect(() => {
     const { notes: savedNotes, formattedNotes: savedFormattedNotes } = getNotesFromStorage();
     
@@ -226,6 +226,7 @@ const NotesPanel = () => {
         handleSaveNotes={handleSaveNotes}
         handleSaveToPdf={handleSaveToPdf}
         handleOpenFlashCards={() => setIsFlashCardOpen(true)}
+        handleOpenAIFlashCards={() => setIsAIFlashCardOpen(true)}
         notes={notes}
       />
       
@@ -262,6 +263,12 @@ const NotesPanel = () => {
         notesText={notes} 
         open={isFlashCardOpen} 
         onClose={() => setIsFlashCardOpen(false)} 
+      />
+      
+      <AIFlashCardTraining 
+        notesText={notes} 
+        open={isAIFlashCardOpen} 
+        onClose={() => setIsAIFlashCardOpen(false)} 
       />
     </div>
   );

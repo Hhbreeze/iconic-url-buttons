@@ -1,6 +1,6 @@
 
 import React from "react";
-import { FileDown, BookOpen } from "lucide-react";
+import { FileDown, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NotesColumnSelector from "./NotesColumnSelector";
 import { ColumnCount } from "@/utils/noteFormatters";
@@ -12,6 +12,7 @@ interface NotesHeaderProps {
   handleSaveNotes: () => void;
   handleSaveToPdf: () => void;
   handleOpenFlashCards: () => void;
+  handleOpenAIFlashCards: () => void;
   notes: string;
 }
 
@@ -21,6 +22,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
   handleSaveNotes,
   handleSaveToPdf,
   handleOpenFlashCards,
+  handleOpenAIFlashCards,
   notes
 }) => {
   
@@ -33,6 +35,15 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
     handleOpenFlashCards();
   };
   
+  const onOpenAIFlashCards = () => {
+    if (!notes || notes.trim().length === 0) {
+      toast.error("Please add some notes before creating AI flash cards");
+      return;
+    }
+    
+    handleOpenAIFlashCards();
+  };
+  
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-xl font-medium text-white">Notes</h2>
@@ -41,6 +52,14 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
           columnCount={columnCount} 
           onColumnChange={onColumnChange} 
         />
+        <Button
+          size="sm"
+          onClick={onOpenAIFlashCards}
+          className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1"
+        >
+          <Sparkles className="w-4 h-4" />
+          AI Cards
+        </Button>
         <Button
           size="sm"
           onClick={onOpenFlashCards}
