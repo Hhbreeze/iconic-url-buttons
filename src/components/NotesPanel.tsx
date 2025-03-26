@@ -1,16 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2, X, BookOpen } from "lucide-react";
+import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2, X, BookOpen, Columns, Columns2, Columns3 } from "lucide-react";
 import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import FlashCardTraining from "./FlashCardTraining";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const COLORS = ["yellow", "pink", "green", "blue", "purple"];
 
 type FormatType = "bold" | "italic" | "underline" | "highlight" | "none";
 type HighlightColor = "yellow" | "pink" | "green" | "blue" | "purple";
+type ColumnCount = "1" | "2" | "3";
 
 const NotesPanel = () => {
   const [notes, setNotes] = useState<string>("");
@@ -22,6 +30,7 @@ const NotesPanel = () => {
   const [currentFormat, setCurrentFormat] = useState<FormatType>("none");
   const [highlightColor, setHighlightColor] = useState<HighlightColor>("yellow");
   const [isFlashCardOpen, setIsFlashCardOpen] = useState(false);
+  const [columnCount, setColumnCount] = useState<ColumnCount>("1");
 
   useEffect(() => {
     const savedNotes = localStorage.getItem("quicklinks-notes");
@@ -351,11 +360,53 @@ const NotesPanel = () => {
     setIsFlashCardOpen(true);
   };
 
+  const handleColumnChange = (value: string) => {
+    setColumnCount(value as ColumnCount);
+    
+    localStorage.setItem("quicklinks-notes-columns", value);
+    
+    toast.success(`Notes now displayed in ${value} column${value !== "1" ? "s" : ""}`);
+  };
+
+  useEffect(() => {
+    const savedColumns = localStorage.getItem("quicklinks-notes-columns");
+    if (savedColumns && ["1", "2", "3"].includes(savedColumns)) {
+      setColumnCount(savedColumns as ColumnCount);
+    }
+  }, []);
+
   return (
     <div className="glass-card bg-white/10 dark:bg-black/25 p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-medium text-white">Notes</h2>
         <div className="flex items-center gap-2">
+          <div className="flex items-center mr-2">
+            <Select value={columnCount} onValueChange={handleColumnChange}>
+              <SelectTrigger className="w-[130px] h-8 text-white border-white/20 bg-white/5">
+                <SelectValue placeholder="Columns" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-700">
+                <SelectItem value="1" className="text-white">
+                  <div className="flex items-center gap-2">
+                    <Columns className="h-4 w-4" />
+                    <span>1 Column</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="2" className="text-white">
+                  <div className="flex items-center gap-2">
+                    <Columns2 className="h-4 w-4" />
+                    <span>2 Columns</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="3" className="text-white">
+                  <div className="flex items-center gap-2">
+                    <Columns3 className="h-4 w-4" />
+                    <span>3 Columns</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <Button
             size="sm"
             onClick={handleSaveNotes}
@@ -460,7 +511,10 @@ const NotesPanel = () => {
       <div ref={notesRef} className="flex-1 min-h-[200px] bg-white/5 text-white resize-none border border-solid border-white/20 rounded-md p-2">
         <div
           ref={editorRef}
-          className="w-full h-full min-h-[200px] outline-none focus:outline-none focus:ring-0 whitespace-pre-wrap"
+          className={`w-full h-full min-h-[200px] outline-none focus:outline-none focus:ring-0 whitespace-pre-wrap ${
+            columnCount === "2" ? "column-count-2" : 
+            columnCount === "3" ? "column-count-3" : ""
+          }`}
           contentEditable
           onKeyUp={handleEditorInput}
           onMouseUp={handleEditorInput}
@@ -471,6 +525,10 @@ const NotesPanel = () => {
             minHeight: "200px",
             fontSize: "14px",
             lineHeight: "1.6",
+            columnGap: "2rem",
+            columnRuleWidth: columnCount !== "1" ? "1px" : "0",
+            columnRuleStyle: columnCount !== "1" ? "solid" : "none",
+            columnRuleColor: "rgba(255, 255, 255, 0.2)",
           }}
         />
       </div>

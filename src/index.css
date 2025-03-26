@@ -96,3 +96,12 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+/* Multi-column layout styles */
+.column-count-2 {
+  column-count: 2;
+}
+
+.column-count-3 {
+  column-count: 3;
+}
