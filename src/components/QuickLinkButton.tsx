@@ -23,6 +23,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
   const isMobile = useIsMobile();
 
   const handleClick = () => {
@@ -80,7 +81,9 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
     // Start a timer when the user holds their finger on the button
     if (isMobile) {
       setIsPressed(true);
+      setIsLongPress(false);
       const timer = setTimeout(() => {
+        setIsLongPress(true);
         setIsEditing(true);
         setIsPressed(false);
       }, 800); // 800ms long press to edit
@@ -94,6 +97,14 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
       setIsPressed(false);
+      
+      // Only handle click if it wasn't a long press and we have a URL
+      if (!isLongPress && link.url) {
+        handleClick();
+      }
+      
+      // Reset long press state
+      setIsLongPress(false);
     }
   };
 
@@ -103,6 +114,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
       setIsPressed(false);
+      setIsLongPress(false);
     }
   };
 
@@ -147,11 +159,7 @@ const QuickLinkButton: React.FC<QuickLinkButtonProps> = ({ link, onUpdate }) => 
         )}
         onClick={isMobile ? undefined : handleClick}
         onTouchStart={handleTouchStart}
-        onTouchEnd={() => {
-          handleTouchEnd();
-          // Only trigger click if we don't have a long press going
-          if (!longPressTimer && hasUrl) handleClick();
-        }}
+        onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
         onContextMenu={handleEdit}
         onMouseEnter={handleMouseEnter}
