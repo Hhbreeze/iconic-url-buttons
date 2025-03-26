@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2, X } from "lucide-react";
+import { FileDown, Bold, Italic, Underline, List, HighlighterIcon, Text, AlignLeft, Undo2, X, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import FlashCardTraining from "./FlashCardTraining";
 
 const COLORS = ["yellow", "pink", "green", "blue", "purple"];
 
@@ -20,6 +21,7 @@ const NotesPanel = () => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [currentFormat, setCurrentFormat] = useState<FormatType>("none");
   const [highlightColor, setHighlightColor] = useState<HighlightColor>("yellow");
+  const [isFlashCardOpen, setIsFlashCardOpen] = useState(false);
 
   useEffect(() => {
     const savedNotes = localStorage.getItem("quicklinks-notes");
@@ -340,6 +342,15 @@ const NotesPanel = () => {
     }
   };
 
+  const handleOpenFlashCards = () => {
+    if (!notes || notes.trim().length === 0) {
+      toast.error("Please add some notes before creating flash cards");
+      return;
+    }
+    
+    setIsFlashCardOpen(true);
+  };
+
   return (
     <div className="glass-card bg-white/10 dark:bg-black/25 p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
@@ -352,6 +363,14 @@ const NotesPanel = () => {
             className="text-white border-white/20 bg-white/5 hover:bg-white/10"
           >
             Save
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleOpenFlashCards}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1"
+          >
+            <BookOpen className="w-4 h-4" />
+            Flash Cards
           </Button>
           <Button
             size="sm"
@@ -464,6 +483,12 @@ const NotesPanel = () => {
           <span className="font-semibold">Tip:</span> Select text to format or highlight
         </p>
       </div>
+      
+      <FlashCardTraining 
+        notesText={notes} 
+        open={isFlashCardOpen} 
+        onClose={() => setIsFlashCardOpen(false)} 
+      />
     </div>
   );
 };
