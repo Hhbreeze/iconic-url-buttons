@@ -63,7 +63,7 @@ const Index = () => {
         <div className="flex flex-col gap-6">
           {/* Quick Links Section - Tight frame */}
           <div className="glass-card py-1 px-0.5 bg-white/15 dark:bg-black/25 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-2xl shadow-xl inline-block mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-1">
+            <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1">
               {links.map((link) => (
                 <QuickLinkButton
                   key={link.id}
